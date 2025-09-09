@@ -4,6 +4,7 @@ import logo from "../assets/logo (2).png";
 import { addBusiness, deleteBusiness, fetchNearbyBusinesses } from "../api/BusinessAPI";
 import BusinessCards from "../components/BusinessCards";
 import BusinessModal from "../components/BusinessModal";
+import TopBar from "../components/TopBar";
 
 
 const NearbyBusinesses = () => {
@@ -94,19 +95,7 @@ const NearbyBusinesses = () => {
 
   return (
     <div className="main-container">
-      <div className="top-bar">
-        <img src={logo} alt="Local Pulse Logo" className="search-logo" />
-        <div className="search-container">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search nearby places..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button className="search-button">Search</button>
-        </div>
-      </div>
+  <TopBar logo={logo} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       {loading && <p>Loading nearby businesses...</p>}
       {locationError && <p className="error">{locationError}</p>}
@@ -144,8 +133,7 @@ const NearbyBusinesses = () => {
           newBusiness={newBusiness}
           handleChange={handleChange}
           handleAddBusiness={handleAddBusiness}
-          onClose={() => setShowModal(false)}
-        />
+          onClose={() => setShowModal(false)}/>
       )}
     </div>
   );
