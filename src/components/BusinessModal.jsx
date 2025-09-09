@@ -5,16 +5,17 @@ const BusinessModal = ({
   onClose,
 }) => {
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>Add New Business</h2>
-        <div className="form-group">
+    <div className="fixed inset-0 bg-white/30 backdrop-blur-sm bg-opacity-60 flex items-center justify-center z-[1000]">
+      <div className="bg-white p-5 rounded-lg w-[400px]">
+        <h2 className="text-lg font-semibold mb-4">Add New Business</h2>
+        <div className="space-y-2">
           <input
             type="text"
             name="name"
             placeholder="Name"
             value={newBusiness.name}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
           <input
             type="text"
@@ -22,6 +23,7 @@ const BusinessModal = ({
             placeholder="Category"
             value={newBusiness.category}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
           <input
             type="text"
@@ -29,6 +31,7 @@ const BusinessModal = ({
             placeholder="Latitude"
             value={newBusiness.latitude}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
           <input
             type="text"
@@ -36,6 +39,7 @@ const BusinessModal = ({
             placeholder="Longitude"
             value={newBusiness.longitude}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
           <input
             type="number"
@@ -43,6 +47,7 @@ const BusinessModal = ({
             placeholder="Rating"
             value={newBusiness.rating}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
           <input
             type="text"
@@ -50,14 +55,21 @@ const BusinessModal = ({
             placeholder="Contact"
             value={newBusiness.contact}
             onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-gray-300"
           />
         </div>
 
-        <div className="modal-actions">
-          <button className="ok-btn" onClick={handleAddBusiness}>
+        <div className="mt-3 flex justify-end gap-2">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            onClick={handleAddBusiness}
+          >
             OK
           </button>
-          <button className="cancel-btn" onClick={onClose}>
+          <button
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+            onClick={onClose}
+          >
             Cancel
           </button>
         </div>
