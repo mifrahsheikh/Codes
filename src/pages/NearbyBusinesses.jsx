@@ -6,7 +6,6 @@ import BusinessCards from "../components/BusinessCards";
 import BusinessModal from "../components/BusinessModal";
 import TopBar from "../components/TopBar";
 
-
 const NearbyBusinesses = () => {
   const [businesses, setBusinesses] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -94,20 +93,22 @@ const NearbyBusinesses = () => {
   };
 
   return (
-    <div className="main-container">
-  <TopBar logo={logo} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <TopBar logo={logo} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      {loading && <p>Loading nearby businesses...</p>}
-      {locationError && <p className="error">{locationError}</p>}
+      {loading && <p className="text-gray-600">Loading nearby businesses...</p>}
+      {locationError && <p className="text-red-500">{locationError}</p>}
       {!loading && filtered.length === 0 && !locationError && (
-        <p>No businesses found nearby.</p>
+        <p className="text-gray-600">No businesses found nearby.</p>
       )}
 
       {!loading && filtered.length > 0 && (
-        <div className="grid-container">
-          <div className="left-column">
-            <div className="business-header">Businesses</div>
-            <div className="business-list">
+        <div className="flex gap-5">
+          <div className="flex-1 flex flex-col">
+            <div className="bg-white p-3 text-center font-bold text-xl rounded-lg shadow mb-3">
+              Businesses
+            </div>
+            <div className="bg-white p-3 rounded-lg h-[60%] overflow-y-auto shadow">
               {filtered.map((business) => (
                 <BusinessCards
                   key={business.id}
@@ -117,17 +118,19 @@ const NearbyBusinesses = () => {
               ))}
             </div>
           </div>
-          <div className="right-column">
+
+          <div className="flex-1 max-w-[50%] h-[50%]">
             <MapView businesses={filtered} />
           </div>
         </div>
       )}
 
       <button
-        className="floating-add-button"
+        className="fixed bottom-5 left-5 bg-green-400 text-white rounded-full px-5 py-3 text-base font-bold shadow-lg"
         onClick={() => setShowModal(true)}>
         + Add Business
       </button>
+
       {showModal && (
         <BusinessModal
           newBusiness={newBusiness}
