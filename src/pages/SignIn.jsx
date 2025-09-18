@@ -1,52 +1,68 @@
-import React, { useRef } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../api/AuthAPI";
 
 const SignIn = () => {
   const username = useRef();
   const password = useRef();
   const navigate = useNavigate();
+  const [login, { isLoading, error }] = useLoginMutation();
+
   const myFunction = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/token/', {
+      const response = await login({
         username: username.current.value,
         password: password.current.value,
-      });
-      
-      console.log('Access Token:', response.data.access);
-      console.log('Refresh Token:', response.data.refresh);
-  
-    
-      localStorage.setItem('access', response.data.access);
-      localStorage.setItem('refresh', response.data.refresh);
-  
-      navigate('/myprofile'); 
+      }).unwrap();
+
+      localStorage.setItem("access", response.access);
+      localStorage.setItem("refresh", response.refresh);
+
+      navigate("/myprofile");
     } catch (error) {
-      console.error('Login failed:', error);
-      alert('Invalid username or password.');
+      console.error("Login failed:", error);
+      alert("Invalid username or password.");
     }
   };
-  
+
   return (
-    <div className="signin-container">
-      <h1 className="signin-title">Sign In</h1>
-      <div className="form-group">
-        <label htmlFor="username">Username</label>
-        <input type="text" id="username" ref={username} className="form-input" />
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-5">
+      <h1 className="text-5xl text-gray-800 mb-5">Sign In</h1>
+      <div className="w-full max-w-md mb-4">
+        <label htmlFor="username" className="block mb-2 font-medium">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          ref={username}
+          className="w-full p-2 border rounded-md focus:ring-blue-400"
+        />
       </div>
-      <div className="form-group">
-        <label htmlFor="password">Password</label>
+
+      <div className="w-full max-w-md mb-6">
+        <label htmlFor="password" className="block mb-2 font-medium">
+          Password
+        </label>
         <input
           type="password"
           id="password"
           ref={password}
-          className="form-input"
+          className="w-full p-2 border rounded-md focus:ring-blue-400"
         />
       </div>
-      <button className="signin-button" onClick={myFunction}>
+
+      <button
+        onClick={myFunction}
+        disabled={isLoading}
+        className="px-5 py-3 text-white bg-blue-500 rounded-md cursor-pointer transition-colors duration-300 w-full max-w-md hover:bg-blue-700"
+      >
         Sign In
       </button>
+
+      {error && (
+        <p className="text-red">Invalid username or password.</p>
+      )}
     </div>
   );
 };
