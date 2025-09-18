@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import MapView from "../components/MapView";
 import logo from "../assets/logo (2).png";
-import { addBusiness, deleteBusiness, fetchNearbyBusinesses } from "../api/BusinessAPI";
-import BusinessCards from "../components/BusinessCards";
-import BusinessModal from "../components/BusinessModal";
-import TopBar from "../components/TopBar";
-
+import { useAddBusinessMutation, useDeleteBusinessMutation, useFetchNearbyBusinessesQuery } from "../api/BusinessAPI";
+import TopBar from './../components/TopBar';
+import BusinessCards from './../components/BusinessCards';
+import BusinessModal from './../components/BusinessModal';
 
 const NearbyBusinesses = () => {
-  const [businesses, setBusinesses] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [coords, setCoords] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [locationError, setLocationError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [newBusiness, setNewBusiness] = useState({
     name: "",
@@ -25,37 +21,29 @@ const NearbyBusinesses = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-
-        try {
-          const data = await fetchNearbyBusinesses(lat, lng);
-          setBusinesses(data);
-          setFiltered(data);
-        } catch (error) {
-          console.error("Error fetching nearby businesses:", error);
-          setLocationError("Failed to fetch nearby businesses.");
-        } finally {
-          setLoading(false);
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        setLocationError("Location permission is required.");
-        setLoading(false);
-      }
+      (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => setCoords(null)
     );
   }, []);
 
-  useEffect(() => {
-    const results = businesses.filter(
-      (business) =>
-        business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        business.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFiltered(results);
-  }, [searchTerm, businesses]);
+const {
+  data: businessesData = [],
+  error,
+  isLoading,
+} = useFetchNearbyBusinessesQuery(coords, { skip: !coords });
+
+  const businesses = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results ?? [];
+
+  const [addBusiness] = useAddBusinessMutation();
+  const [deleteBusiness] = useDeleteBusinessMutation();
+
+  const filtered = businesses.filter(
+    (b) =>
+      (b.name ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (b.category ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleChange = (e) => {
     setNewBusiness({ ...newBusiness, [e.target.name]: e.target.value });
@@ -63,9 +51,7 @@ const NearbyBusinesses = () => {
 
   const handleAddBusiness = async () => {
     try {
-      const data = await addBusiness(newBusiness);
-      setBusinesses([...businesses, data]);
-      setFiltered([...filtered, data]);
+      await addBusiness(newBusiness).unwrap();
       setShowModal(false);
       setNewBusiness({
         name: "",
@@ -75,39 +61,42 @@ const NearbyBusinesses = () => {
         rating: "",
         contact: "",
       });
-    } catch (error) {
-      console.error("Error adding business:", error);
-      alert("Failed to add business. Check backend logs.");
+    } catch (err) {
+      console.error("Error adding business:", err);
+      alert("Failed to add business.");
     }
   };
 
   const handleDeleteBusiness = async (id) => {
     try {
-      await deleteBusiness(id);
-      const updated = businesses.filter((b) => b.id !== id);
-      setBusinesses(updated);
-      setFiltered(updated);
-    } catch (error) {
-      console.error("Error deleting business:", error);
-      alert("Failed to delete business. Check backend logs.");
+      await deleteBusiness(id).unwrap();
+    } catch (err) {
+      console.error("Error deleting business:", err);
+      alert("Failed to delete business.");
     }
   };
 
   return (
-    <div className="main-container">
-  <TopBar logo={logo} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-      {loading && <p>Loading nearby businesses...</p>}
-      {locationError && <p className="error">{locationError}</p>}
-      {!loading && filtered.length === 0 && !locationError && (
-        <p>No businesses found nearby.</p>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <TopBar
+        logo={logo}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
+      {error && (
+        <p className="text-red-500">Failed to fetch nearby businesses.</p>
+      )}
+      {!isLoading && filtered.length === 0 && !error && (
+        <p className="text-gray-600">No businesses found nearby.</p>
       )}
 
-      {!loading && filtered.length > 0 && (
-        <div className="grid-container">
-          <div className="left-column">
-            <div className="business-header">Businesses</div>
-            <div className="business-list">
+      {!isLoading && filtered.length > 0 && (
+        <div className="flex gap-5">
+          <div className="flex-1 flex flex-col">
+            <div className="bg-white p-3 text-center font-bold text-xl rounded-lg shadow mb-3">
+              Businesses
+            </div>
+            <div className="bg-white p-3 rounded-lg h-[37%] overflow-y-auto shadow">
               {filtered.map((business) => (
                 <BusinessCards
                   key={business.id}
@@ -117,23 +106,27 @@ const NearbyBusinesses = () => {
               ))}
             </div>
           </div>
-          <div className="right-column">
+
+          <div className="flex-1 max-w-[50%] h-[50%]">
             <MapView businesses={filtered} />
           </div>
         </div>
       )}
 
       <button
-        className="floating-add-button"
-        onClick={() => setShowModal(true)}>
+        className="fixed bottom-5 left-5 bg-green-400 text-white rounded-full px-5 py-3 text-base font-bold shadow-lg"
+        onClick={() => setShowModal(true)}
+      >
         + Add Business
       </button>
+
       {showModal && (
         <BusinessModal
           newBusiness={newBusiness}
           handleChange={handleChange}
           handleAddBusiness={handleAddBusiness}
-          onClose={() => setShowModal(false)}/>
+          onClose={() => setShowModal(false)}
+        />
       )}
     </div>
   );

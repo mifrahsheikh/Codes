@@ -1,17 +1,30 @@
-import axios from "axios";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-export const fetchNearbyBusinesses = async (lat, lng) => {
-  const response = await axios.get("http://127.0.0.1:8000/api/nearby/", {
-    params: { lat, lng },
-  });
-  return response.data;
-};
+export const businessApi=createApi({
+  reducerPath:'businessApi',
+  baseQuery: fetchBaseQuery({baseUrl:'http://127.0.0.1:8000/api/'}),
+  endpoints:(builder)=>({
+    fetchNearbyBusinesses:builder.query({
+      query:({lat,lng})=> `nearby/?lat=${lat}&lng=${lng}`
+    }),
+    
+    addBusiness:builder.mutation({
+      query:(BusinessData)=>({url:'business/add/',
+        method:"POST",
+        body:BusinessData,
+      }),
+    }),
+    deleteBusiness:builder.mutation({
+      query:(id)=>({
+        url:`business/delete/${id}/`,
+        method:"DELETE",
+      }),
+    }),
+  }),
+});
 
-export const addBusiness = async (businessData) => {
-  const response = await axios.post("http://127.0.0.1:8000/apiadd/", businessData);
-  return response.data;
-};
-
-export const deleteBusiness = async (id) => {
-  await axios.delete("http://127.0.0.1:8000/api/business/delete/${id}/");
-};
+export const {
+  useFetchNearbyBusinessesQuery,
+  useAddBusinessMutation,
+  useDeleteBusinessMutation,
+} = businessApi;
