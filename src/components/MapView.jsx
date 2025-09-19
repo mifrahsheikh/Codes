@@ -23,12 +23,11 @@ const MapView = ({ businesses }) => {
   }
 
   return (
-    <MapContainer center={userLocation} zoom={13} style={{ height: "600px", width: "100%" }}>
+    <MapContainer center={userLocation} zoom={13} className="h-[600px] w-full">
       <TileLayer
         attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+
       <Marker position={userLocation}>
         <Popup>You are here</Popup>
       </Marker>
