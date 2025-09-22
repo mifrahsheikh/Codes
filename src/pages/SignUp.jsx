@@ -8,7 +8,6 @@ const SignUp = () => {
   const location = useLocation();
   const [signup, { isLoading, error }] = useSignupMutation();
 
-  // role comes from where user clicked signup (landing → businessuser, category → user)
   const role = location.state?.role || "user";
 
   const validate = (values) => {
@@ -39,7 +38,8 @@ const SignUp = () => {
         navigate("/user");
       }
     } catch (err) {
-      console.error("Signup failed:", err);
+      console.error("Signup failed:", err?.data || err?.error || err);
+
     }
   };
 
@@ -54,7 +54,7 @@ const SignUp = () => {
         </button>
 
         <h1 className="text-3xl font-bold text-gray-800 mb-5 text-center">
-          Sign Up as {role === "businessuser" ? "Business User" : "User"}
+          Sign Up
         </h1>
 
         <Formik

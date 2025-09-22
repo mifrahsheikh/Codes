@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { useRefreshTokenMutation } from "../api/AuthAPI";
-import { logout } from "../api/TokenSlice";
+
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ useEffect(() => {
     if (refresh) {
       refreshToken(refresh);
     } else {
-      dispatch(logout());
+      dispatch(Logout());
     }
   }
 }

@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import MapView from "../components/MapView";
 import { useFetchNearbyBusinessesQuery, useGetApprovedBusinessesQuery } from "../api/BusinessAPI";
 import Navbar from "../components/Navbar";
-import SearchBar from "../components/SEarchBar";
+
 import AboutSection from "./AboutSection";
 import CategorySection from "./CategorySection";
 import Footer from "./Footer";

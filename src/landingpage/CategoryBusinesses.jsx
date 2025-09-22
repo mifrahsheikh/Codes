@@ -59,9 +59,10 @@ const CategoryBusinesses = () => {
                     className="bg-white p-6 rounded-xl max-w-lg mx-auto mt-20 shadow-lg"
                     overlayClassName="fixed inset-0 bg-black/50 flex items-start justify-center"
                 >
-                    <h2 className="text-2xl font-bold mb-2">{selectedBusiness.name}</h2>
+                    <h2 className="text-2xl font-bold mb-">{selectedBusiness.name}</h2>
                     <p>Category: {selectedBusiness.category}</p>
                     <p>Rating: {selectedBusiness.rating}</p>
+                    <p>Contact: {selectedBusiness.contact}</p>
 
                     {!isLoggedIn ? (
                         <div
@@ -77,9 +78,9 @@ const CategoryBusinesses = () => {
                             <p>
                                 Location: {selectedBusiness.latitude}, {selectedBusiness.longitude}
                             </p>
+                    
                         </>
                     )}
-
                     <button
                         className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
                         onClick={() => setSelectedBusiness(null)}
