@@ -1,61 +1,50 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../api/AuthAPI";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "../api/TokenSlice";
+import { useSignupMutation } from "../api/AuthAPI";
 
-const SignIn = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+const SignUp = () => {
   const navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
-  const dispatch = useDispatch();
+  const location = useLocation();
+  const [signup, { isLoading, error }] = useSignupMutation();
+
+  const role = location.state?.role || "user";
 
   const validate = (values) => {
     const errors = {};
-    if (!values.username) {
-      errors.username = "Required";
-    }
-    if (!values.password) {
-      errors.password = "Required";
-    }
+    if (!values.username) errors.username = "Required";
+    if (!values.email) errors.email = "Required";
+    if (!values.password) errors.password = "Required";
+    if (!values.confirmPassword) errors.confirmPassword = "Required";
+    else if (values.password !== values.confirmPassword)
+      errors.confirmPassword = "Passwords must match";
     return errors;
   };
 
   const handleSubmit = async (values) => {
     try {
-      const response = await login({
+      await signup({
         username: values.username,
         password: values.password,
+        email: values.email,
+        role: role,
       }).unwrap();
 
-      if (response.access) {
-        localStorage.setItem("access", response.access);
-        localStorage.setItem("refresh", response.refresh);
-        localStorage.setItem("role", response.role);
+      alert("Signup successful!");
 
-        dispatch(
-          setCredentials({
-            access: response.access,
-            refresh: response.refresh,
-            role: response.role,
-          })
-        );
-
-        if (response.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/businessuser");
-        }
+      if (role === "businessuser") {
+        navigate("/businessuser");
+      } else {
+        navigate("/user");
       }
     } catch (err) {
-      console.error("Login failed:", err?.data || err?.error || err);
+      console.error("Signup failed:", err?.data || err?.error || err);
+
     }
   };
 
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-40">
       <div className="bg-white w-[90%] max-w-md rounded-lg shadow-lg p-6 relative">
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-black text-xl"
@@ -65,11 +54,16 @@ const SignIn = () => {
         </button>
 
         <h1 className="text-3xl font-bold text-gray-800 mb-5 text-center">
-          Sign In
+          Sign Up
         </h1>
 
         <Formik
-          initialValues={{ username: "", password: "" }}
+          initialValues={{
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
           validate={validate}
           onSubmit={handleSubmit}
         >
@@ -91,7 +85,22 @@ const SignIn = () => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-
+              <div>
+                <label htmlFor="email" className="block mb-1 font-medium">
+                  Email
+                </label>
+                <Field
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="w-full p-2 border rounded-md focus:ring-emerald-400"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
               <div>
                 <label htmlFor="password" className="block mb-1 font-medium">
                   Password
@@ -105,27 +114,28 @@ const SignIn = () => {
                 <ErrorMessage
                   name="password"
                   component="p"
+                  className="text-red-500 text mt-1"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block mb-1 font-medium"
+                >
+                  Confirm Password
+                </label>
+                <Field
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  className="w-full p-2 border rounded-md focus:ring-emerald-400"
+                />
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="p"
                   className="text-red-500 text-sm mt-1"
                 />
-
-                <p
-                  onClick={() => navigate("/forgot-password")}
-                  className="mt-2 text-sm text-emerald-600 cursor-pointer hover:underline"
-                >
-                  Forgot Password?
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="admin"
-                  checked={isAdmin}
-                  onChange={(e) => setIsAdmin(e.target.checked)}
-                  className="h-4 w-4"
-                />
-                <label htmlFor="admin" className="font-medium">
-                  Sign in as Admin
-                </label>
               </div>
 
               <button
@@ -133,25 +143,25 @@ const SignIn = () => {
                 disabled={isLoading}
                 className="w-full px-5 py-3 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
               >
-                Sign In
+                {isLoading ? "Signing up..." : "Sign Up"}
               </button>
             </Form>
           )}
         </Formik>
 
         <p className="mt-4 text-sm text-gray-600 text-center">
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <span
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/signin")}
             className="text-emerald-600 cursor-pointer hover:underline"
           >
-            Sign up here
+            Sign in here
           </span>
         </p>
 
         {error && (
           <p className="text-red-500 mt-2 text-center">
-            Invalid username or password.
+            Signup failed. Try again.
           </p>
         )}
       </div>
@@ -159,4 +169,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;

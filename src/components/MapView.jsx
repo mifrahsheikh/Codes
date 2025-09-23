@@ -19,16 +19,20 @@ const MapView = ({ businesses }) => {
   }, []);
 
   if (!userLocation) {
-    return <p>Loading map...</p>; 
+    return <p>Loading map...</p>;
   }
 
   return (
-    <MapContainer center={userLocation} zoom={13} style={{ height: "600px", width: "100%" }}>
+    <MapContainer
+      center={userLocation}
+      zoom={13}
+      className="h-full w-full rounded-lg"
+    >
       <TileLayer
         attribution='&copy; OpenStreetMap contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      
+
       <Marker position={userLocation}>
         <Popup>You are here</Popup>
       </Marker>
