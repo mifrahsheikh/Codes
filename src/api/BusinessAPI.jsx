@@ -1,8 +1,16 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const businessApi = createApi({
   reducerPath: "businessApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL,
+     prepareHeaders: (headers, { getState }) => {
+    const token = getState().auth.access;
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+   }),
   tagTypes: ["PendingBusinesses", "ApprovedBusinesses"],
   endpoints: (builder) => ({
     fetchNearbyBusinesses: builder.query({
@@ -10,10 +18,10 @@ export const businessApi = createApi({
         `${import.meta.env.VITE_API_FETCH_NEARBY}?lat=${lat}&lng=${lng}`,
     }),
     addBusiness: builder.mutation({
-      query: (businessData) => ({
+      query: (formData) => ({
         url: import.meta.env.VITE_API_ADD_BUSINESS,
         method: "POST",
-        body: businessData,
+        body: formData,
       }),
     }),
     deleteBusiness: builder.mutation({
@@ -44,7 +52,7 @@ export const businessApi = createApi({
     }),
     updateBusiness: builder.mutation({
       query: ({ id, data }) => ({
-        url: `businesses/${id}/`,
+        url: `${import.meta.env.VITE_API_UPDATE_BUSINESS}${id}/`,
         method: 'PUT',
         body: data,
       }),

@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 
 const MapView = ({ businesses }) => {
   const [userLocation, setUserLocation] = useState(null);
+  const defaultLocation = [31.4705, 74.9029];
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -13,7 +14,7 @@ const MapView = ({ businesses }) => {
       },
       (error) => {
         console.error("Error getting location:", error);
-        setUserLocation([31.4705, 74.9029]);
+        setUserLocation(defaultLocation);
       }
     );
   }, []);
@@ -21,6 +22,14 @@ const MapView = ({ businesses }) => {
   if (!userLocation) {
     return <p>Loading map...</p>;
   }
+
+  const validBusinesses = businesses.filter(
+    (b) =>
+      b.latitude !== undefined &&
+      b.latitude !== null &&
+      b.longitude !== undefined &&
+      b.longitude !== null
+  );
 
   return (
     <MapContainer
@@ -37,14 +46,17 @@ const MapView = ({ businesses }) => {
         <Popup>You are here</Popup>
       </Marker>
 
-      {businesses.map((biz) => (
-        <Marker key={biz.id} position={[biz.latitude, biz.longitude]}>
-          <Popup>
-            <strong>{biz.name}</strong><br />
-            Category: {biz.category}
-          </Popup>
-        </Marker>
-      ))}
+{businesses.map((b) => (
+  <Marker key={b.id} position={[b.lat, b.lng]}>
+    <Popup>
+      <strong>{b.name}</strong><br />
+      Category: {b.category}<br />
+      Rating: {b.rating ?? "N/A"}<br />
+      Distance: {b.distance ? `${b.distance} m` : "N/A"}<br />
+      {b.image && <img src={b.image} alt={b.name} className="w-24 h-24 object-cover mt-1"/>}
+    </Popup>
+  </Marker>
+))}
     </MapContainer>
   );
 };

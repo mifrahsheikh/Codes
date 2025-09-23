@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/logo (2).png";
 import TopBar from "../components/TopBar";
 import BusinessCards from "../components/BusinessCards";
@@ -21,16 +21,17 @@ const BusinessUser = () => {
     image: null,
   });
 
-  const {
-    data: businessesData = [],
-    error,
-    isLoading,
-  } = useGetBusinessesQuery();
-
-  const businesses = Array.isArray(businessesData) ? businessesData : [];
+  const { data: businessesData = [], error, isLoading } = useGetBusinessesQuery();
+  const [businesses, setBusinesses] = useState([]);
 
   const [addBusiness] = useAddBusinessMutation();
   const [deleteBusiness] = useDeleteBusinessMutation();
+
+  useEffect(() => {
+    if (Array.isArray(businessesData)) {
+      setBusinesses(businessesData);
+    }
+  }, [businessesData]);
 
   const filtered = businesses.filter(
     (b) =>
@@ -50,10 +51,10 @@ const BusinessUser = () => {
     try {
       const formData = new FormData();
       for (let key in newBusiness) {
-        if (newBusiness[key] !== null) formData.append(key, newBusiness[key]);
+        if (newBusiness[key]) formData.append(key, newBusiness[key]);
       }
-      await addBusiness(formData).unwrap();
-      setShowModal(false);
+      const addedBusiness = await addBusiness(formData).unwrap();
+
       setNewBusiness({
         name: "",
         category: "",
@@ -63,6 +64,9 @@ const BusinessUser = () => {
         contact: "",
         image: null,
       });
+      setShowModal(false);
+
+      setBusinesses((prev) => [addedBusiness, ...prev]);
     } catch (err) {
       console.error("Error adding business:", err);
       alert("Failed to add business.");
@@ -72,6 +76,7 @@ const BusinessUser = () => {
   const handleDeleteBusiness = async (id) => {
     try {
       await deleteBusiness(id).unwrap();
+      setBusinesses((prev) => prev.filter((b) => b.id !== id));
     } catch (err) {
       console.error("Error deleting business:", err);
       alert("Failed to delete business.");
@@ -82,9 +87,13 @@ const BusinessUser = () => {
     localStorage.clear();
     navigate("/");
   };
+
   const handleUpdateBusiness = async (formData, id) => {
     try {
-      await updateBusiness({ id, data: formData }).unwrap();
+      const updatedBusiness = await updateBusiness({ id, data: formData }).unwrap();
+      setBusinesses((prev) =>
+        prev.map((b) => (b.id === id ? updatedBusiness : b))
+      );
     } catch (err) {
       console.error("Failed to update business:", err);
     }

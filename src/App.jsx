@@ -6,7 +6,6 @@ import LandingPage from "./landingpage/LandingPage";
 import SignUp from "./pages/SignUp";
 import ApprovedBusinesses from './admin/Approved';
 import Dashboard from "./admin/Dashboard";
-import UserBusinesses from "./pages/UserBusinesses";
 import Unauthorized from "./api/Unauthorized";
 import CategoryBusinesses from "./landingpage/CategoryBusinesses";
 import BusinessUser from "./pages/BusinessUser";

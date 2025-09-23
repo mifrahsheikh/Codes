@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../api/AuthAPI";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../api/TokenSlice";
+import { useLoginMutation } from "../api/AuthAPI";
 
 const SignIn = () => {
   const [isAdmin, setIsAdmin] = useState(false);

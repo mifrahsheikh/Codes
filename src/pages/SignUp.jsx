@@ -143,7 +143,7 @@ const SignUp = () => {
                 disabled={isLoading}
                 className="w-full px-5 py-3 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
               >
-                {isLoading ? "Signing up..." : "Sign Up"}
+                Sign Up
               </button>
             </Form>
           )}
@@ -152,7 +152,7 @@ const SignUp = () => {
         <p className="mt-4 text-sm text-gray-600 text-center">
           Already have an account?{" "}
           <span
-            onClick={() => navigate("/signin")}
+            onClick={() => navigate("/login")}
             className="text-emerald-600 cursor-pointer hover:underline"
           >
             Sign in here

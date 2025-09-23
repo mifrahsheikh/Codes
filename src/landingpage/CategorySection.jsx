@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { FaHospital, FaUtensils, FaShoppingBag, FaStore, FaCoffee, FaHotel } from "react-icons/fa";
+import mallPicture from '../assets/pictures/malls.jpg'
+import restaurantImage from '../assets/pictures/restaurant-image.jpg'
+import hospitalImage from '../assets/pictures/hospital-image.png'
 
-const icons = {
-  hospitals: <FaHospital className="text-emerald-600 text-3xl mb-3" />,
-  restaurants: <FaUtensils className="text-emerald-600 text-3xl mb-3" />,
-  brands: <FaShoppingBag className="text-emerald-600 text-3xl mb-3" />,
-  shops: <FaStore className="text-emerald-600 text-3xl mb-3" />,
-  cafes: <FaCoffee className="text-emerald-600 text-3xl mb-3" />,
-  hotels: <FaHotel className="text-emerald-600 text-3xl mb-3" />,
+const categoryImages = {
+  hospital:hospitalImage,
+  restaurant: restaurantImage,
+  mall: mallPicture,
+  shop: "",
+  cafe: "",
+  hotel: "",
 };
 
 const CategorySection = ({ categories, grouped, isLoading, error }) => {
@@ -18,7 +20,6 @@ const CategorySection = ({ categories, grouped, isLoading, error }) => {
       <h2 className="text-3xl font-bold mb-10 text-center lg:text-left text-emerald-400">
         Browse by Category
       </h2>
-
       {isLoading ? (
         <p className="text-gray-300">Loading categories...</p>
       ) : error ? (
@@ -30,16 +31,18 @@ const CategorySection = ({ categories, grouped, isLoading, error }) => {
           {categories.map((category) => (
             <div
               key={category}
-              className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg hover:shadow-emerald-500/30 
-                         transition cursor-pointer flex flex-col items-center text-center hover:scale-105 "
+              className="bg-white rounded-2xl p-4 h-80 shadow-md hover:shadow-lg hover:shadowtransition cursor-pointer flex flex-col items-center text-center hover:scale-105 transition"
               onClick={() => navigate(`/category/${category}`)}
             >
-              {icons[category.toLowerCase()] || <FaStore className="text-emerald-600 text-3xl mb-3" />}
-
+              <img
+                src={categoryImages[category.toLowerCase()] || "/images/default.jpg"}
+                alt={category}
+                className="w-[200%] h-49 object-cover mb-3"
+              />
               <h3 className="text-lg font-semibold text-emerald-700">{category}</h3>
 
               <p className="text-gray-500 text-sm mt-2">
-                {grouped[category].length} businesses
+                {grouped[category]?.length || 0} businesses
               </p>
             </div>
           ))}

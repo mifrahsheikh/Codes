@@ -8,20 +8,19 @@ Modal.setAppElement("#root");
 const CategoryBusinesses = () => {
     const { name } = useParams();
     const navigate = useNavigate();
-    const { data: businesses = [], isLoading, error } = useGetApprovedBusinessesQuery();
+    const { data: businesses = [] } = useGetApprovedBusinessesQuery();
     const [selectedBusiness, setSelectedBusiness] = useState(null);
 
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
     const isLoggedIn = !!token && role === "user";
-
     const filtered = businesses.filter((b) => b.category === name);
 
     return (
         <div className="min-h-full bg-gradient-to-b from-black to-emerald-900 text-white px-10 lg:px-20 pt-32">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold text-emerald-400">
-                    {name} Near You
+                    {name}
                 </h2>
                 <button
                     className="text-gray-400 hover:text-white"
@@ -31,22 +30,27 @@ const CategoryBusinesses = () => {
                 </button>
             </div>
 
-            {isLoading ? (
-                <p>Loading businesses...</p>
-            ) : error ? (
-                <p className="text-red-500">Failed to load businesses.</p>
-            ) : filtered.length === 0 ? (
+            {filtered.length === 0 ? (
                 <p className="text-gray-300">No businesses found in this category.</p>
             ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {filtered.map((b) => (
                         <div
                             key={b.id}
-                            className="bg-white text-black rounded-xl p-4 shadow cursor-pointer hover:shadow-lg transition"
+                            className="bg-white text-black rounded-xl shadow cursor-pointer hover:shadow-lg transition flex flex-col"
                             onClick={() => setSelectedBusiness(b)}
                         >
-                            <h4 className="font-bold">{b.name}</h4>
-                            <p className="text-sm text-gray-500">Rating: {b.rating}</p>
+                            <img
+                                src={b.image || "/placeholder.png"}
+                                alt={b.name}
+                                className="w-full h-48 object-cover rounded-t-xl"
+                            />
+
+                            <div className="p-4 flex flex-col gap-1">
+                                <h4 className="font-bold text-lg">{b.name}</h4>
+                                <p className="text-gray-500 text-sm">Category: {b.category}</p>
+                                <p className="text-gray-500 text-sm">Rating: {b.rating}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -78,7 +82,7 @@ const CategoryBusinesses = () => {
                             <p>
                                 Location: {selectedBusiness.latitude}, {selectedBusiness.longitude}
                             </p>
-                    
+
                         </>
                     )}
                     <button

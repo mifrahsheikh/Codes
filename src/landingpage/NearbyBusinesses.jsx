@@ -14,19 +14,16 @@ const NearbyBusinesses = ({
             nearby.current.scrollBy({ left: -250, behavior: "smooth" });
         }
     };
-
     const scrollRight = () => {
         if (nearby.current) {
             nearby.current.scrollBy({ left: 250, behavior: "smooth" });
         }
     };
-
     return (
         <section className="px-10 lg:px-20 mt-20 relative">
             <h2 className="text-3xl font-bold mb-4 text-center lg:text-left">
                 Nearby Businesses
             </h2>
-
             {isNearbyLoading ? (
                 <p>Loading nearby businesses...</p>
             ) : nearbyError ? (
@@ -37,7 +34,7 @@ const NearbyBusinesses = ({
                 <div className="relative">
                     <button
                         onClick={scrollLeft}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-10 hover:bg-emerald-700 shadow-lg"
+                        className="absolute left-[-3%] top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-20 hover:bg-emerald-700 shadow-lg"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +54,7 @@ const NearbyBusinesses = ({
 
                     <button
                         onClick={scrollRight}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-10 hover:bg-emerald-700 shadow-lg"
+                        className="absolute right-[-3%] top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-20 hover:bg-emerald-700 shadow-lg"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +74,7 @@ const NearbyBusinesses = ({
 
                     <div
                         ref={nearby}
-                        className="flex gap-4 py-2 overflow-x-hidden scroll-smooth"
+                        className="flex gap-4 py-2 overflow-x-hidden overflow-y-hidden scroll-smooth"
                     >
                         {filteredNearbyBusinesses.length === 0 ? (
                             <div className="flex items-center justify-center w-full text-gray-500">
@@ -85,6 +82,7 @@ const NearbyBusinesses = ({
                             </div>
                         ) : (
                             filteredNearbyBusinesses.map((b) => (
+
                                 <div
                                     key={b.id}
                                     className="min-w-[20%] h-75 bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer"
@@ -93,8 +91,9 @@ const NearbyBusinesses = ({
                                     <img
                                         src={b.image || "/placeholder.png"}
                                         alt={b.name}
-                                        className="w-full h-50 object-cover rounded-t-xl"
+                                        className="w-full h-44 object-cover rounded-t-xl"
                                     />
+
                                     <div className="p-3 flex flex-col gap-1">
                                         <h3 className="font-bold text-emerald-700">{b.name}</h3>
                                         <p className="text-gray-500">{b.category}</p>
