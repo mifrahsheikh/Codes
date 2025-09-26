@@ -3,18 +3,17 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import MapView from "../components/MapView";
 import { useFetchNearbyBusinessesQuery, useGetApprovedBusinessesQuery } from "../api/BusinessAPI";
-import Navbar from "../components/Navbar";
 import AboutSection from "./AboutSection";
 import CategorySection from "./CategorySection";
 import Footer from "./Footer";
-import NearbyBusinesses from "./NearbyBusinesses";
-import SearchBar from "../components/SearchBar";
+import NearbyBusinesses from './NearbyBusinesses';
 
 Modal.setAppElement("#root");
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const { data: businesses = [], isLoading, error } = useGetApprovedBusinessesQuery();
+
   const [coords, setCoords] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,12 +28,15 @@ const LandingPage = () => {
     );
   }, []);
 
-const {
-  data: nearbyData, 
-  isLoading: isNearbyLoading,
-  error: nearbyError,
-} = useFetchNearbyBusinessesQuery(coords, { skip: !coords });
-const nearbyBusinesses = nearbyData?.businesses || [];
+  const {
+    data: nearbyData,
+    isLoading: isNearbyLoading,
+    error: nearbyError,
+  } = useFetchNearbyBusinessesQuery(coords, { skip: !coords });
+
+  const nearbyBusinesses = Array.isArray(nearbyData)
+    ? nearbyData
+    : nearbyData?.businesses || [];
 
   const grouped = businesses.reduce((acc, b) => {
     if (!acc[b.category]) acc[b.category] = [];
@@ -42,17 +44,19 @@ const nearbyBusinesses = nearbyData?.businesses || [];
     return acc;
   }, {});
   const categories = Object.keys(grouped);
- const filteredNearbyBusinesses = nearbyBusinesses.filter((b) => {
-  const term = searchTerm.toLowerCase();
-  return b.name.toLowerCase().includes(term) || b.category.toLowerCase().includes(term);
-});
 
+  const filteredNearbyBusinesses = nearbyBusinesses.filter((b) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      b.name?.toLowerCase().includes(term) ||
+      b.category?.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="min-h-full bg-gradient-to-b from-black to-emerald-900 text-white z-50 bg-fixed">
-      <Navbar isLoggedIn={isLoggedIn} />
+      {/* Top sections */}
       <AboutSection businesses={nearbyBusinesses} />
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <NearbyBusinesses
         isNearbyLoading={isNearbyLoading}
         nearbyError={nearbyError}
@@ -60,14 +64,21 @@ const nearbyBusinesses = nearbyData?.businesses || [];
         filteredNearbyBusinesses={filteredNearbyBusinesses}
         setSelectedBusiness={setSelectedBusiness}
       />
-      <div className="pt-24">
-        <section className="px-10 lg:px-20 h-120 relative z-0">
-          <MapView businesses={filteredNearbyBusinesses} />
-        </section>
-      </div>
 
-      <CategorySection categories={categories} grouped={grouped} isLoading={isLoading} error={error} />
+      {/* Category browse section */}
+      <CategorySection
+        categories={categories}
+        grouped={grouped}
+        isLoading={isLoading}
+        error={error}
+      />
 
+      {/* Map placed below the category section */}
+      <section className="px-10 lg:px-20 h-[400px] md:h-[500px] relative z-0 mt-6">
+        <MapView businesses={filteredNearbyBusinesses} />
+      </section>
+
+      {/* Business modal */}
       {selectedBusiness && (
         <Modal
           isOpen={!!selectedBusiness}
@@ -103,7 +114,7 @@ const nearbyBusinesses = nearbyData?.businesses || [];
           {!isLoggedIn && (
             <div
               className="mt-4 text-gray-500 cursor-pointer hover:text-emerald-600 flex items-center gap-2"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/login", { state: { role: "user" } })}
             >
               <span>Sign in to see full business details</span>
               <span className="text-emerald-600 font-bold text-lg">→</span>
@@ -119,6 +130,7 @@ const nearbyBusinesses = nearbyData?.businesses || [];
           </div>
         </Modal>
       )}
+
       <Footer />
     </div>
   );
