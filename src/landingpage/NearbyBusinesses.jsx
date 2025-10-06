@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-
 const NearbyBusinesses = ({
     isNearbyLoading,
     nearbyError,
@@ -8,7 +7,25 @@ const NearbyBusinesses = ({
     setSelectedBusiness,
 }) => {
     const nearby = useRef(null);
-
+    const getFallbackImage = (category = "") => {
+        const cat = category?.toLowerCase() || "";
+        if (cat.includes("restaurant") || cat.includes("cafe") || cat.includes("food") || cat.includes("catering"))
+            return "/images/restaurant.jpg";
+        if (cat.includes("hospital") || cat.includes("clinic") || cat.includes("health"))
+            return "/images/hospital.jpg";
+        if (cat.includes("service") || cat.includes("shop") || cat.includes("store"))
+            return "/images/store.jpg";
+        if (cat.includes("commercial") || cat.includes("mall") || cat.includes("building"))
+            return "/images/malls.jpeg";
+        if (cat.includes("entertainment") || cat.includes("cinemas"))
+            return "/images/entertainment.jpg";
+        return "/placeholder.png";
+    };
+    const getBadges = (b) => {
+        const badges = [];
+        if (b.rating >= 4.5) badges.push("⭐ Top Rated");
+        return badges;
+    };
     const scrollLeft = () => {
         if (nearby.current) {
             nearby.current.scrollBy({ left: -250, behavior: "smooth" });
@@ -30,7 +47,7 @@ const NearbyBusinesses = ({
             {isNearbyLoading ? (
                 <p>Loading nearby businesses...</p>
             ) : nearbyError ? (
-                <p className="text-red-500">Failed to load nearby businesses.</p>
+                <p className="text-gray-400 animate-pulse">Reconnecting...</p>
             ) : nearbyBusinesses.length === 0 ? (
                 <p className="text-gray-300 text-center">No businesses nearby</p>
             ) : (
@@ -39,46 +56,15 @@ const NearbyBusinesses = ({
                         onClick={scrollLeft}
                         className="absolute left-0 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-10 hover:bg-emerald-700 shadow-lg"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 19l-7-7 7-7"
-                            />
-                        </svg>
+                        ←
                     </button>
-
                     <button
                         onClick={scrollRight}
                         className="absolute right-0 top-1/2 -translate-y-1/2 bg-emerald-600 text-white p-3 rounded-full z-10 hover:bg-emerald-700 shadow-lg"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                            />
-                        </svg>
+                        →
                     </button>
-
-                    <div
-                        ref={nearby}
-                        className="flex gap-4 py-2 overflow-x-hidden scroll-smooth"
-                    >
+                    <div ref={nearby} className="flex gap-4 py-2 overflow-x-hidden overflow-y-hidden scroll-smooth">
                         {filteredNearbyBusinesses.length === 0 ? (
                             <div className="flex items-center justify-center w-full text-gray-500">
                                 No businesses match your search
@@ -87,19 +73,31 @@ const NearbyBusinesses = ({
                             filteredNearbyBusinesses.map((b) => (
                                 <div
                                     key={b.id}
-                                    className="min-w-[20%] h-75 bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer"
-                                    onClick={() => setSelectedBusiness(b)}
+                                    className="flex-none w-[22%] h-[25%] bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer overflow-hidden"
+                                    onClick={() => {
+                                        if (String(b.id).startsWith("db_")) {
+                                            setSelectedBusiness(b);
+                                        }
+                                    }}
                                 >
+
                                     <img
-                                        src={b.image || "/placeholder.png"}
+                                        src={b.image || getFallbackImage(b.category)}
                                         alt={b.name}
-                                        className="w-full h-50 object-cover rounded-t-xl"
+                                        className="w-full h-47 object-cover rounded-t-xl"
                                     />
-                                    <div className="p-3 flex flex-col gap-1">
-                                        <h3 className="font-bold text-emerald-700">{b.name}</h3>
-                                        <p className="text-gray-500">{b.category}</p>
-                                        <p className="text-gray-500">Rating: {b.rating}</p>
-                                        <p className="text-gray-500">Distance: {b.distance}</p>
+                                    <div className="p-3 flex flex-col gap-1 text-sm leading-tight">
+                                        <h3 className="font-bold text-emerald-700 truncate">{b.name}</h3>
+                                        <div className="flex gap-1 flex-wrap mt-1 h-6 overflow-hidden">
+                                            {getBadges(b).map((badge, idx) => (
+                                                <span key={idx} className="text-[10px] px-2 py-1 rounded-full bg-emerald-100 text-emerald-800 font-semibold">
+                                                    {badge}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <p className="text-gray-500 truncate">{b.category}</p>
+                                        <p className="text-gray-500">Rating: {b.rating ?? "N/A"}</p>
+                                        <p className="text-gray-500">Distance: {b.distance ?? "N/A"}</p>
                                     </div>
                                 </div>
                             ))

@@ -8,7 +8,8 @@ import SearchBar from "../components/SEarchBar";
 import AboutSection from "./AboutSection";
 import CategorySection from "./CategorySection";
 import Footer from "./Footer";
-import NearbyBusinesses from "./NearbyBusinesses";
+import NearbyBusinesses from './NearbyBusinesses';
+import SearchBar from './../components/SearchBar';
 
 Modal.setAppElement("#root");
 
@@ -19,7 +20,7 @@ const LandingPage = () => {
   const [coords, setCoords] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access");
   const role = localStorage.getItem("role");
   const isLoggedIn = !!token && role === "user";
 
@@ -29,7 +30,6 @@ const LandingPage = () => {
       () => setCoords(null)
     );
   }, []);
-
   const {
     data: nearbyBusinesses = [],
     isLoading: isNearbyLoading,
@@ -50,73 +50,90 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-full bg-gradient-to-b from-black to-emerald-900 text-white z-50 bg-fixed">
-      <Navbar isLoggedIn={isLoggedIn} />
       <AboutSection businesses={nearbyBusinesses} />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
       <NearbyBusinesses
         isNearbyLoading={isNearbyLoading}
         nearbyError={nearbyError}
         nearbyBusinesses={nearbyBusinesses}
         filteredNearbyBusinesses={filteredNearbyBusinesses}
         setSelectedBusiness={setSelectedBusiness}
+        searchTerm={searchTerm}
       />
-      <div className="pt-24">
-        <section className="px-10 lg:px-20 h-120 relative z-0">
-          <MapView businesses={filteredNearbyBusinesses} />
-        </section>
-      </div>
-
-      <CategorySection categories={categories} grouped={grouped} isLoading={isLoading} error={error} />
+      <CategorySection
+        categories={categories}
+        grouped={grouped}
+        isLoading={isLoading}
+        error={error}
+      />
+      <section className="px-10 lg:px-20 mt-6 relative z-0">
+        <div className="w-full h-[50vh] md:h-[60vh] lg:h-[70vh]">
+          <MapView
+            businesses={filteredNearbyBusinesses}
+            setSelectedBusiness={setSelectedBusiness}
+          />
+        </div>
+      </section>
 
       {selectedBusiness && (
         <Modal
           isOpen={!!selectedBusiness}
           onRequestClose={() => setSelectedBusiness(null)}
           overlayClassName="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000]"
-          className="bg-white p-6 rounded-xl max-w-md w-full mx-4 shadow-lg"
+          className="bg-white p-0 rounded-xl max-w-md w-full mx-4 shadow-lg overflow-hidden flex flex-col"
         >
-          <h2 className="text-xl font-bold text-emerald-700 mb-4">{selectedBusiness.name}</h2>
-          <div className="space-y-2 text-gray-700">
-            <p>
-              <span className="font-semibold">Category:</span> {selectedBusiness.category}
-            </p>
-            <p>
-              <span className="font-semibold">Rating:</span> {selectedBusiness.rating}
-            </p>
-            <p>
-              <span className="font-semibold">Contact:</span> {selectedBusiness.contact}
-            </p>
+          {selectedBusiness.image && (
+            <img
+              src={selectedBusiness.image}
+              alt={selectedBusiness.name}
+              className="w-full h-56 object-cover"
+            />
+          )}
+
+          <div className="p-6 text-gray-700 flex flex-col gap-2">
+            <h2 className="text-xl font-bold text-emerald-700">{selectedBusiness.name}</h2>
+            <span className=" bg-emerald-600 text-white text-[13px] font-semibold px-1 py-1 rounded-md">
+              {selectedBusiness.category}
+            </span>
+
+            <p><span className="font-semibold">Rating:</span> {selectedBusiness.rating}</p>
+            <p><span className="font-semibold">Contact:</span> {selectedBusiness.contact}</p>
+
             {isLoggedIn && (
               <p>
                 <span className="font-semibold">Location:</span> {selectedBusiness.latitude},{" "}
                 {selectedBusiness.longitude}
               </p>
             )}
-            {selectedBusiness.image && (
-              <img
-                src={selectedBusiness.image}
-                alt={selectedBusiness.name}
-                className="w-full h-60 object-cover rounded mt-2"
-              />
+
+            {!isLoggedIn && (
+              <div className="mt-4 text-gray-500 flex flex-col items-center gap-2">
+                <div
+                  className="cursor-pointer hover:text-emerald-600 flex items-center gap-2"
+                  onClick={() =>
+                    navigate("/login", { state: { role: "user", fromLandingPage: true } })
+                  }>
+                  <span>Sign in to see full business details</span>
+                  <span className="text-emerald-600 font-bold text-lg">→</span>
+                </div>
+                <div
+                  className="cursor-pointer hover:text-emerald-600"
+                  onClick={() =>
+                    navigate("/signup", { state: { role: "user", redirectTo: "/user" } })
+                  }
+                >
+                  or Create an Account →
+                </div>
+              </div>
             )}
-          </div>
-          {!isLoggedIn && (
-            <div
-              className="mt-4 text-gray-500 cursor-pointer hover:text-emerald-600 flex items-center gap-2"
-              onClick={() => navigate("/login")}
-            >
-              <span>Sign in to see full business details</span>
-              <span className="text-emerald-600 font-bold text-lg">→</span>
+            <div className="mt-6 flex justify-end">
+              <button
+                className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
+                onClick={() => setSelectedBusiness(null)}
+              >
+                Close
+              </button>
             </div>
-          )}
-          <div className="mt-6 flex justify-end">
-            <button
-              className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
-              onClick={() => setSelectedBusiness(null)}
-            >
-              Close
-            </button>
           </div>
         </Modal>
       )}

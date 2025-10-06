@@ -3,7 +3,7 @@ import hospitalImage from "../assets/hospitalImage.png";
 const AboutSection = ({ businesses }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const categories = Array.from(new Set(businesses.map((b) => b.category)));
+  const categories = ["Hospitals", "Restaurants", "Malls", "Cafes", "Hotels"];
 
   const categoryImages = {
     Restaurant: "/assets/restaurant.png",
@@ -23,10 +23,12 @@ const AboutSection = ({ businesses }) => {
   if (!categories || categories.length === 0) return null;
 
   return (
-    <section className="flex flex-col lg:flex-row items-center justify-between px-10 lg:px-20 pt-32 lg:pt-40">
-      <div className="lg:w-1/2 text-center lg:text-left">
-        <h1 className="text-5xl font-extrabold mb-6">
-          Discover <span className="text-emerald-400">Businesses Around You</span>
+    <section className="flex flex-col lg:flex-row items-center justify-between px-6 sm:px-10 lg:px-20 pt-20 sm:pt-28 lg:pt-40 gap-10 lg:gap-20">
+      {/* Left Text Section */}
+      <div className="w-full lg:w-1/2 text-center lg:text-left">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-6 leading-snug">
+          Discover{" "}
+          <span className="text-emerald-400">Businesses Around You</span>
         </h1>
         <p className="text-gray-300 text-lg mb-6">
           LocalPulse helps you explore restaurants, hospitals, shops, and brands in your area. Find trusted services, popular stores, and local businesses all in one place.
@@ -57,7 +59,7 @@ const AboutSection = ({ businesses }) => {
           ))}
         </div>
 
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
           {categories.map((_, idx) => (
             <span
               key={idx}
