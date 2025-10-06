@@ -17,6 +17,7 @@ const BusinessCards = ({ business, onDelete, onUpdate }) => {
         />
         <h3 className="font-bold text-emerald-700 text-lg">{business.name}</h3>
         <p className="text-gray-500">{business.category}</p>
+        <p className="text-gray-500">{business.address}</p>
         <div className="flex items-center justify-center mt-1">
           <span className="text-yellow-400">Rating: {business.rating}</span>
         </div>

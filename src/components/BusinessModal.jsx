@@ -12,7 +12,7 @@ const BusinessModal = ({ newBusiness, handleChange, handleAddBusiness, onClose, 
             placeholder="Name"
             value={newBusiness.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
 
           <input
             type="text"
@@ -68,7 +68,7 @@ const BusinessModal = ({ newBusiness, handleChange, handleAddBusiness, onClose, 
             type="text"
             name="description"
             placeholder="Description"
-            value={newBusiness.description|| ""}
+            value={newBusiness.description || ""}
             onChange={handleChange}
             className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
@@ -87,18 +87,42 @@ const BusinessModal = ({ newBusiness, handleChange, handleAddBusiness, onClose, 
             onChange={handleFileChange}
             className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
+          <input
+            type="text"
+            name="promotions"
+            placeholder="Promotions (e.g. 20% OFF, Buy 1 Get 1)"
+            value={newBusiness.promotions || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="time"
+            name="open_time"
+            value={newBusiness.open_time || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="time"
+            name="close_time"
+            value={newBusiness.close_time || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
         </div>
 
         <div className="mt-4 flex justify-end gap-3">
           <button
-            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray text-white placeholder-gray-400"
+            className="w-30 px-3 py-2 rounded-md border border-emerald-400 bg-gray text-black placeholder-gray-400 hover:bg-gray-400"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
             className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700"
-            onClick={handleAddBusiness}
+            onClick={() => {
+              handleAddBusiness();
+            }}
           >
             OK
           </button>
