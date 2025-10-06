@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useGetBusinessesQuery } from "../api/BusinessAPI";
-import BusinessDetailModal from "../components/BusinessDetailModal";
+
 
 const UserBusinesses = () => {
   const { data: businesses = [], isLoading, error } = useGetBusinessesQuery();
