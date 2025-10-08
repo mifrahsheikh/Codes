@@ -40,4 +40,8 @@ const ForgotPassword = () => {
   );
 };
 
+<<<<<<< HEAD
 export default ForgotPassword;
+=======
+export default ForgotPassword;
+>>>>>>> feature/updated-components

@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import MapView from "../components/MapView";
 import { useFetchNearbyBusinessesQuery, useGetApprovedBusinessesQuery } from "../api/BusinessAPI";
-import Navbar from "../components/Navbar";
-import SearchBar from "../components/SEarchBar";
 import AboutSection from "./AboutSection";
 import CategorySection from "./CategorySection";
 import Footer from "./Footer";
@@ -31,10 +29,14 @@ const LandingPage = () => {
     );
   }, []);
   const {
-    data: nearbyBusinesses = [],
+    data: nearbyData,
     isLoading: isNearbyLoading,
     error: nearbyError,
   } = useFetchNearbyBusinessesQuery(coords, { skip: !coords });
+
+  const nearbyBusinesses = Array.isArray(nearbyData)
+    ? nearbyData
+    : nearbyData?.businesses || [];
 
   const grouped = businesses.reduce((acc, b) => {
     if (!acc[b.category]) acc[b.category] = [];
@@ -45,7 +47,10 @@ const LandingPage = () => {
 
   const filteredNearbyBusinesses = nearbyBusinesses.filter((b) => {
     const term = searchTerm.toLowerCase();
-    return b.name.toLowerCase().includes(term) || b.category.toLowerCase().includes(term);
+    return (
+      b.name?.toLowerCase().includes(term) ||
+      b.category?.toLowerCase().includes(term)
+    );
   });
 
   return (
@@ -75,6 +80,7 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Business modal */}
       {selectedBusiness && (
         <Modal
           isOpen={!!selectedBusiness}

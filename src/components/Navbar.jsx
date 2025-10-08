@@ -12,8 +12,6 @@ const Navbar = () => {
   return (
     <nav className="w-full h-27 flex items-center justify-between p-4 bg-black70 backdrop-brightness-20 fixed top-0 shadow z-50">
       <h1 className="text-2xl font-bold text-emerald-400">LocalPulse</h1>
-
-
       <div>
         {!isLoggedIn && (
           <button

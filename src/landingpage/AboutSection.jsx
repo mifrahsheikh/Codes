@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
-import hospitalImage from "../assets/hospitalImage.png";
-const AboutSection = ({ businesses }) => {
+import hospitalImage from "../assets/hospitalImage.jpg";
+import restaurantImage from "../assets/restaurant.jpg";
+import mallImage from "../assets/Mall-image.jpg";
+import cafeImage from "../assets/Cafe's.jpg";
+import hotelImage from "../assets/Hotel.jpg";
+
+const AboutSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const categories = ["Hospitals", "Restaurants", "Malls", "Cafes", "Hotels"];
 
   const categoryImages = {
-    Restaurant: "/assets/restaurant.png",
-    Hospital: hospitalImage,
-    Shop: "/assets/shop.png",
-    Brand: "/assets/brand.png",
-    default: "/assets/default.png",
+    Hospitals: hospitalImage,
+    Restaurants: restaurantImage,
+    Malls: mallImage,
+    Cafes: cafeImage,
+    Hotels: hotelImage,
   };
 
   useEffect(() => {
@@ -18,9 +23,7 @@ const AboutSection = ({ businesses }) => {
       setCurrentIndex((prev) => (prev + 1) % categories.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [categories]);
-
-  if (!categories || categories.length === 0) return null;
+  }, [categories.length]);
 
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between px-6 sm:px-10 lg:px-20 pt-20 sm:pt-28 lg:pt-40 gap-10 lg:gap-20">
@@ -30,16 +33,19 @@ const AboutSection = ({ businesses }) => {
           Discover{" "}
           <span className="text-emerald-400">Businesses Around You</span>
         </h1>
-        <p className="text-gray-300 text-lg mb-6">
-          LocalPulse helps you explore restaurants, hospitals, shops, and brands in your area. Find trusted services, popular stores, and local businesses all in one place.
+        <p className="text-gray-300 text-base sm:text-lg mb-4 sm:mb-6">
+          LocalPulse helps you explore restaurants, hospitals, shops, and brands
+          in your area. Find trusted services, popular stores, and local
+          businesses all in one place.
         </p>
-        <p className="text-gray-300 text-lg mb-6">
-          Our platform provides essential details about each business category. Explore images and discover what each category has to offer.
+        <p className="text-gray-300 text-base sm:text-lg mb-6">
+          Our platform provides essential details about each business category.
+          Explore images and discover what each category has to offer.
         </p>
       </div>
 
-      <div className="lg:w-1/2 mt-10 lg:mt-0 flex justify-center relative">
-        <div className="w-full max-w-md h-64 overflow-hidden rounded-lg shadow-lg relative">
+      <div className="w-full lg:w-1/2 flex justify-center relative">
+        <div className="w-full max-w-[500px] h-60 sm:h-72 md:h-80 overflow-hidden rounded-lg shadow-lg relative">
           {categories.map((category, index) => (
             <div
               key={category}
@@ -52,9 +58,6 @@ const AboutSection = ({ businesses }) => {
                 alt={category}
                 className="w-full h-full object-cover rounded-lg"
               />
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 px-4 py-2 rounded text-white text-lg font-semibold">
-                {category}
-              </div>
             </div>
           ))}
         </div>
@@ -63,7 +66,7 @@ const AboutSection = ({ businesses }) => {
           {categories.map((_, idx) => (
             <span
               key={idx}
-              className={`w-3 h-3 rounded-full cursor-pointer ${
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer ${
                 idx === currentIndex ? "bg-emerald-400" : "bg-gray-300"
               }`}
               onClick={() => setCurrentIndex(idx)}

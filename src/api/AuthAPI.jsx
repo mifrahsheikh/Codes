@@ -18,7 +18,7 @@ baseQuery: fetchBaseQuery({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: "http://127.0.0.1:8000/api/token/",
+        url: import.meta.env.VITE_API_LOGIN,
         method: "POST",
         body: credentials,
       }),

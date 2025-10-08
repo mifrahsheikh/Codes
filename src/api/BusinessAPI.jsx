@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const businessApi = createApi({
   reducerPath: "businessApi",
@@ -24,10 +24,10 @@ export const businessApi = createApi({
         body: formData,
       }),
     }),
-    deleteBusiness:builder.mutation({
-      query:(id)=>({
-        url:`business/delete/${id}/`,
-        method:"DELETE",
+    deleteBusiness: builder.mutation({
+      query: (id) => ({
+        url: `${import.meta.env.VITE_API_DELETE_BUSINESS}${id}/`,
+        method: "DELETE",
       }),
       invalidatesTags: ["PendingBusinesses", "ApprovedBusinesses"],
     }),

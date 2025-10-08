@@ -31,13 +31,11 @@ const NearbyBusinesses = ({
             nearby.current.scrollBy({ left: -250, behavior: "smooth" });
         }
     };
-
     const scrollRight = () => {
         if (nearby.current) {
             nearby.current.scrollBy({ left: 250, behavior: "smooth" });
         }
     };
-
     return (
         <section className="px-10 lg:px-20 mt-20 relative">
             <h2 className="text-3xl font-bold mb-4 text-center lg:text-left">

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import BusinessCards from "../components/BusinessCards";
-import BusinessModal from './../components/BusinessModal';
+import EditBusiness from "../components/EditBusiness";
 import { useNavigate } from "react-router-dom";
 import {
-  useAddBusinessMutation,
   useDeleteBusinessMutation,
   useGetMyBusinessesQuery,
   useUpdateBusinessMutation,
@@ -16,22 +15,12 @@ const BusinessUser = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [updateBusiness] = useUpdateBusinessMutation();
-  const [newBusiness, setNewBusiness] = useState({
-    name: "",
-    category: "",
-    latitude: "",
-    longitude: "",
-    rating: "",
-    contact: "",
-    image: null,
-  });
-
   const { data: businessesData = [], error, isLoading } = useGetMyBusinessesQuery();
   const [businesses, setBusinesses] = useState([]);
-  const [addBusiness] = useAddBusinessMutation();
   const [deleteBusiness] = useDeleteBusinessMutation();
+
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
 
   useEffect(() => {
     if (Array.isArray(businessesData) && businessesData !== businesses) {
@@ -39,37 +28,11 @@ const BusinessUser = () => {
     }
   }, [businessesData]);
 
-  const filtered = (businessesData || []).filter(
+  const filtered = (businesses || []).filter(
     (b) =>
       (b.name ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (b.category ?? "").toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleChange = (e) => setNewBusiness({ ...newBusiness, [e.target.name]: e.target.value });
-  const handleFileChange = (e) => setNewBusiness({ ...newBusiness, image: e.target.files[0] });
-
-  const handleAddBusiness = async () => {
-    try {
-      const formData = new FormData();
-
-      for (let key in newBusiness) {
-        if (newBusiness[key] !== null && newBusiness[key] !== "") {
-          formData.append(key, newBusiness[key]);
-        }
-      }
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": ", pair[1]);
-      }
-
-      const addedBusiness = await addBusiness(formData).unwrap();
-      setNewBusiness({ name: "", category: "", latitude: "", longitude: "", rating: "", contact: "", image: null });
-      setShowModal(false);
-      setBusinesses((prev) => [addedBusiness, ...prev]);
-    } catch (err) {
-      console.error("Error adding business:", err);
-      alert("Failed to add business: " + JSON.stringify(err?.data));
-    }
-  };
 
   const handleDeleteBusiness = async (id) => {
     try {
@@ -88,18 +51,18 @@ const BusinessUser = () => {
     navigate("/");
   };
 
-const handleUpdateBusiness = async (id, formData) => {
-  try {
-    const updated = await updateBusiness({ id, formData }).unwrap(); // <-- fixed
-    setBusinesses((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updated } : b))
-    );
-    return true;
-  } catch (err) {
-    console.error("Failed to update business:", err);
-    return false;
-  }
-};
+  const handleUpdateBusiness = async (id, formData) => {
+    try {
+      const updated = await updateBusiness({ id, formData }).unwrap();
+      setBusinesses((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, ...updated } : b))
+      );
+      return true;
+    } catch (err) {
+      console.error("Failed to update business:", err);
+      return false;
+    }
+  };
 
   return (
     <div className="p-6 min-h-full bg-gradient-to-b from-black to-emerald-900 text-white">
@@ -121,32 +84,31 @@ const handleUpdateBusiness = async (id, formData) => {
       {!isLoading && filtered.length > 0 && (
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filtered.map((business) => (
-           <BusinessCards
-  key={business.id}
-  business={business}
-  onDelete={handleDeleteBusiness}
-  onUpdate={(formData) => handleUpdateBusiness(business.id, formData)} 
-/>
-
+            <BusinessCards
+              key={business.id}
+              business={business}
+              onDelete={() => handleDeleteBusiness(business.id)}
+              onClick={() => setSelectedBusiness(business)}
+            />
           ))}
         </div>
       )}
+
+      {selectedBusiness && (
+        <EditBusiness
+          business={selectedBusiness}
+          onClose={() => setSelectedBusiness(null)}
+          onUpdate={(formData) =>
+            handleUpdateBusiness(selectedBusiness.id, formData)
+          }
+        />
+      )}
       <button
         className="fixed bottom-5 left-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 shadow-lg text-lg font-bold"
-        onClick={() => setShowModal(true)}
+        onClick={() => navigate("/add-business")}
       >
         + Add Business
       </button>
-
-      {showModal && (
-        <BusinessModal
-          newBusiness={newBusiness}
-          handleChange={handleChange}
-          handleFileChange={handleFileChange}
-          handleAddBusiness={handleAddBusiness}
-          onClose={() => setShowModal(false)}
-        />
-      )}
 
       <div className="mt-10 flex justify-end">
         <button

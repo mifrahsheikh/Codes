@@ -10,6 +10,7 @@ const SignIn = () => {
   const location = useLocation();
   const roleFromState = location.state?.role || (location.state?.fromLandingPage ? "user" : "user");
   const [login, { isLoading, error }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const validate = (values) => {
     const errors = {};
@@ -21,8 +22,8 @@ const SignIn = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await login({
-        username: username.current.value,
-        password: password.current.value,
+        username: values.username,
+        password: values.password,
       }).unwrap();
 
       if (response.access) {
@@ -39,6 +40,7 @@ const SignIn = () => {
       console.error("Login failed:", err?.data || err?.error || err);
     }
   };
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -101,30 +103,6 @@ const SignIn = () => {
           </p>
         )}
       </div>
-
-      <div className="w-full max-w-md mb-6">
-        <label htmlFor="password" className="block mb-2 font-medium">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          ref={password}
-          className="w-full p-2 border rounded-md focus:ring-blue-400"
-        />
-      </div>
-
-      <button
-        onClick={myFunction}
-        disabled={isLoading}
-        className="px-5 py-3 text-white bg-blue-500 rounded-md cursor-pointer transition-colors duration-300 w-full max-w-md hover:bg-blue-700"
-      >
-        Sign In
-      </button>
-
-      {error && (
-        <p className="text-red">Invalid username or password.</p>
-      )}
     </div>
   );
 };

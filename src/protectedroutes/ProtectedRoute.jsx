@@ -1,5 +1,5 @@
-import React ,{useEffect, useState} from 'react'
-import {  Navigate, useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { useRefreshTokenMutation } from "../api/AuthAPI";
@@ -32,10 +32,6 @@ useEffect(() => {
 if (allowedRoles && !allowedRoles.includes(role)) {
   return <Navigate to="/unauthorized" replace />;
 }
-  return (
-    <div>
-      {isAuthenticated ? children :<Navigate to='/sign-in'/>}
-    </div>
-  )
-}
-export default ProtectedRoute
+  return children;
+};
+export default ProtectedRoute;
