@@ -1,29 +1,26 @@
-const BusinessModal = ({
-  newBusiness,
-  handleChange,
-  handleAddBusiness,
-  onClose,
-}) => {
+import React from "react";
+
+const BusinessModal = ({ newBusiness, handleChange, handleAddBusiness, onClose, handleFileChange }) => {
   return (
-    <div className="fixed inset-0 bg-white/30 backdrop-blur-sm bg-opacity-60 flex items-center justify-center z-[1000]">
-      <div className="bg-white p-5 rounded-lg w-[400px]">
-        <h2 className="text-lg font-semibold mb-4">Add New Business</h2>
-        <div className="space-y-2">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-4">
+      <div className="bg-white text-white p-6 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-lg">
+        <h2 className="text-xl font-bold text-emerald-500 mb-4">Add New Business</h2>
+        <div className="flex flex-col gap-3">
           <input
             type="text"
             name="name"
             placeholder="Name"
             value={newBusiness.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
-          />
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+
           <input
             type="text"
             name="category"
             placeholder="Category"
             value={newBusiness.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
           <input
             type="text"
@@ -31,7 +28,7 @@ const BusinessModal = ({
             placeholder="Latitude"
             value={newBusiness.latitude}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
           <input
             type="text"
@@ -39,7 +36,7 @@ const BusinessModal = ({
             placeholder="Longitude"
             value={newBusiness.longitude}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
           <input
             type="number"
@@ -47,7 +44,9 @@ const BusinessModal = ({
             placeholder="Rating"
             value={newBusiness.rating}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
+            min={0}
+            max={5}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
           />
           <input
             type="text"
@@ -55,22 +54,77 @@ const BusinessModal = ({
             placeholder="Contact"
             value={newBusiness.contact}
             onChange={handleChange}
-            className="w-full px-3 py-2 rounded-md border border-gray-300"
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={newBusiness.address || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
+          />
+          <input
+            type="text"
+            name="description"
+            placeholder="Description"
+            value={newBusiness.description || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
+          />
+          <input
+            type="url"
+            name="website"
+            placeholder="Website"
+            value={newBusiness.website || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
+          />
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 placeholder-gary-900 focus:outline-none focus:ring-emarald-500"
+          />
+          <input
+            type="text"
+            name="promotions"
+            placeholder="Promotions (e.g. 20% OFF, Buy 1 Get 1)"
+            value={newBusiness.promotions || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="time"
+            name="open_time"
+            value={newBusiness.open_time || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="time"
+            name="close_time"
+            value={newBusiness.close_time || ""}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-md border border-emerald-600 bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
 
-        <div className="mt-3 flex justify-end gap-2">
+        <div className="mt-4 flex justify-end gap-3">
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            onClick={handleAddBusiness}
-          >
-            OK
-          </button>
-          <button
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="w-30 px-3 py-2 rounded-md border border-emerald-400 bg-gray text-black placeholder-gray-400 hover:bg-gray-400"
             onClick={onClose}
           >
             Cancel
+          </button>
+          <button
+            className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700"
+            onClick={() => {
+              handleAddBusiness();
+            }}
+          >
+            OK
           </button>
         </div>
       </div>
